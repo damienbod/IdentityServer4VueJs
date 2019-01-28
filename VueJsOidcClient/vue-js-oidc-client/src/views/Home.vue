@@ -15,6 +15,8 @@ import { Component, Vue } from 'vue-property-decorator';
 import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 import AuthService from '@/services/auth.service';
 
+import axios from 'axios';
+
 const auth = new AuthService();
 
 @Component({
@@ -22,10 +24,13 @@ const auth = new AuthService();
     HelloWorld,
   },
 })
+
 export default class Home extends Vue {
     public currentUser: string = '';
     public accessTokenExpired: boolean | undefined = false;
     public isLoggedIn: boolean = false;
+
+    public todos: [] = [];
 
     get username(): string {
         return this.currentUser;
@@ -46,6 +51,16 @@ export default class Home extends Vue {
 
             this.isLoggedIn = (user !== null && !user.expired);
         });
+    }
+
+    public getProtectedApiData() {
+        axios.get('http://jsonplaceholder.typicode.com/todos')
+            .then((response: any) => {
+                this.todos = response.data;
+            })
+            .catch((error: any) => {
+                alert(error);
+            });
     }
 }
 </script>
