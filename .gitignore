@@ -7,3 +7,8 @@
 /StsServer/node_modules/bootstrap/LICENSE
 /.vs/**/*.*
 /ResourceServer/obj/*.*
+/ResourceServer/obj/**/*.*
+/StsServer/obj/**/*.*
+/ResourceServer/ResourceServer.csproj.user
+/VueJsOidcClient/vue-js-oidc-client/.vs/VSWorkspaceState.json
+/VueJsOidcClient/vue-js-oidc-client/.vs/slnx.sqlite
