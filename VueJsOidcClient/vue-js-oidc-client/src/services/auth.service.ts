@@ -31,4 +31,11 @@ export default class AuthService {
     public logout(): Promise<void> {
         return this.userManager.signoutRedirect();
     }
+
+    public getAccessToken(): Promise<string> {
+        return this.userManager.getUser().then((data: any) => {
+            return data.access_token;
+        })
+            
+    }
 }

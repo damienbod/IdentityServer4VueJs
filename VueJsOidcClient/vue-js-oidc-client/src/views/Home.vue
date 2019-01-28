@@ -5,8 +5,16 @@
             <p v-if="isLoggedIn">User: {{ username }}</p>
             <button @click="login" v-if="!isLoggedIn">Login</button>
             <button @click="logout" v-if="isLoggedIn">Logout</button>
+            <button @click="getProtectedApiData" v-if="isLoggedIn">Get API data</button>
         </div>
         <HelloWorld v-if="isLoggedIn" msg="OIDC Vue.js" />
+
+        <ul v-if="data_event_records && data_event_records.length">
+            <li v-for="data_event_record of data_event_records">
+                <h2>{{data_event_record.Id}} {{data_event_record.Name}}</h2>
+            </li>
+        </ul>
+
     </div>
 </template>
 
@@ -30,7 +38,7 @@ export default class Home extends Vue {
     public accessTokenExpired: boolean | undefined = false;
     public isLoggedIn: boolean = false;
 
-    public todos: [] = [];
+    public data_event_records: [] = [];
 
     get username(): string {
         return this.currentUser;
@@ -54,13 +62,20 @@ export default class Home extends Vue {
     }
 
     public getProtectedApiData() {
-        axios.get('http://jsonplaceholder.typicode.com/todos')
-            .then((response: any) => {
-                this.todos = response.data;
-            })
-            .catch((error: any) => {
-                alert(error);
-            });
+
+        auth.getAccessToken().then((userToken: string) => {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
+
+            axios.get('https://localhost:44355/api/DataEventRecords/')
+                .then((response: any) => {
+                    this.data_event_records = response.data;
+                })
+                .catch((error: any) => {
+                    alert(error);
+                });
+        })
+
+        
     }
 }
 </script>
