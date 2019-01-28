@@ -14,9 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Serialization;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Mvc;
-using ResourceServer.DataProtection;
 using System;
-using ResourceServer.Certificate;
 
 namespace AspNet5SQLite
 {
@@ -55,35 +53,11 @@ namespace AspNet5SQLite
                         store.Close();
                     }
                 }
-                else
-                {
-                    // Azure deployment, will be used if deployed to Azure
-                    var vaultConfigSection = Configuration.GetSection("Vault");
-                    var keyVaultService = new KeyVaultCertificateService(vaultConfigSection["Url"], vaultConfigSection["ClientId"], vaultConfigSection["ClientSecret"]);
-                    cert = keyVaultService.GetCertificateFromKeyVault(vaultConfigSection["CertificateName"]);
-                }
             }
             else
             {
                 cert = new X509Certificate2(Path.Combine(_env.ContentRootPath, "damienbodserver.pfx"), "");
             }
-
-            // Important The folderForKeyStore needs to be backed up.
-            // services.AddDataProtection()
-            //    .SetApplicationName("ResourceServer")
-            //    .PersistKeysToFileSystem(new DirectoryInfo(folderForKeyStore))
-            //    .ProtectKeysWithCertificate(cert);
-
-            services.AddDataProtection()
-                .SetApplicationName("ResourceServer")
-                .ProtectKeysWithCertificate(cert)
-                .AddKeyManagementOptions(options =>
-                    options.XmlRepository = new SqlXmlRepository(
-                        new DataProtectionDbContext(
-                            new DbContextOptionsBuilder<DataProtectionDbContext>().UseSqlite(connection).Options
-                        )
-                    )
-                );
 
             services.AddDbContext<DataEventRecordContext>(options =>
                 options.UseSqlite(connection)
