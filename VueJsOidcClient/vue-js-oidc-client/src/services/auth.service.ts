@@ -35,7 +35,6 @@ export default class AuthService {
     public getAccessToken(): Promise<string> {
         return this.userManager.getUser().then((data: any) => {
             return data.access_token;
-        })
-            
+        });
     }
 }

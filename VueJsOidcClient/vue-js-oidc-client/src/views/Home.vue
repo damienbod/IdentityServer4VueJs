@@ -7,11 +7,10 @@
             <button @click="logout" v-if="isLoggedIn">Logout</button>
             <button @click="getProtectedApiData" v-if="isLoggedIn">Get API data</button>
         </div>
-        <HelloWorld v-if="isLoggedIn" msg="OIDC Vue.js" />
 
-        <ul v-if="data_event_records && data_event_records.length">
-            <li v-for="data_event_record of data_event_records">
-                <h2>{{data_event_record.Id}} {{data_event_record.Name}}</h2>
+        <ul v-if="dataEventRecordsItems && dataEventRecordsItems.length">
+            <li v-for="dataEventRecordsItem of dataEventRecordsItems">
+                <p>{{dataEventRecordsItem.Id}} {{dataEventRecordsItem.Name}}  {{dataEventRecordsItem.Description}} {{dataEventRecordsItem.Timestamp}}</p>
             </li>
         </ul>
 
@@ -20,7 +19,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
 import AuthService from '@/services/auth.service';
 
 import axios from 'axios';
@@ -29,7 +27,6 @@ const auth = new AuthService();
 
 @Component({
   components: {
-    HelloWorld,
   },
 })
 
@@ -38,7 +35,7 @@ export default class Home extends Vue {
     public accessTokenExpired: boolean | undefined = false;
     public isLoggedIn: boolean = false;
 
-    public data_event_records: [] = [];
+    public dataEventRecordsItems: [] = [];
 
     get username(): string {
         return this.currentUser;
@@ -68,14 +65,12 @@ export default class Home extends Vue {
 
             axios.get('https://localhost:44355/api/DataEventRecords/')
                 .then((response: any) => {
-                    this.data_event_records = response.data;
+                    this.dataEventRecordsItems = response.data;
                 })
                 .catch((error: any) => {
                     alert(error);
                 });
-        })
-
-        
+        });
     }
 }
 </script>
