@@ -1,9 +1,9 @@
-# IdentityServer4VueJs
+# IdentityServer4 Vue.Js oidc-client-js 
 
-IdentityServer4 Vue.js with a simple API
+Securing a Vue.js app using OpenID Connect Code Flow with PCKE and IdentityServer4
 
 
-## Start Vue.js UI
+## Changes to Vue.js CLI package.json 
 
 change the project.json file to use HTTPS
 
