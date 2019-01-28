@@ -67,7 +67,7 @@ namespace StsServerIdentity
 
             return new List<Client>
             {
-                 new Client
+                new Client
                 {
                     ClientName = "vuejs_code_client",
                     ClientId = "vuejs_code_client",
