@@ -74,7 +74,7 @@ namespace StsServerIdentity
                     AccessTokenType = AccessTokenType.Reference,
                     // RequireConsent = false,
                     AccessTokenLifetime = 330,// 330 seconds, default 60 minutes
-                    IdentityTokenLifetime = 30,
+                    IdentityTokenLifetime = 300,
 
                     RequireClientSecret = false,
                     AllowedGrantTypes = GrantTypes.Code,
