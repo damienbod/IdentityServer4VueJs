@@ -84,7 +84,7 @@ namespace StsServerIdentity
                     RedirectUris = new List<string>
                     {
                         "https://localhost:44357",
-                        "https://localhost:44357/silent-renew.html"
+                        "https://localhost:44357/callback.html"
 
                     },
                     PostLogoutRedirectUris = new List<string>

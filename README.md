@@ -14,3 +14,5 @@ vue-cli-service serve --https --port 44357
 https://cli.vuejs.org
 
 https://www.jerriepelser.com/blog/using-auth0-with-vue-oidc-client-js/
+
+https://github.com/joaojosefilho/vuejsOidcClient
