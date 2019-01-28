@@ -1,6 +1,6 @@
 # IdentityServer4 Vue.Js oidc-client-js 
 
-Securing a Vue.js app using OpenID Connect Code Flow with PCKE and IdentityServer4
+Securing a Vue.js app using OpenID Connect Code Flow with PKCE and IdentityServer4
 
 
 ## Changes to Vue.js CLI package.json 
@@ -20,3 +20,7 @@ https://github.com/joaojosefilho/vuejsOidcClient
 https://www.scottbrady91.com/Angular/Migrating-oidc-client-js-to-use-the-OpenID-Connect-Authorization-Code-Flow-and-PKCE
 
 https://github.com/IdentityModel/oidc-client-js/
+
+https://tools.ietf.org/html/rfc7636
+
+https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
