@@ -89,7 +89,7 @@ namespace StsServerIdentity
                     },
                     PostLogoutRedirectUris = new List<string>
                     {
-                        "https://localhost:44357/unauthorized",
+                        "https://localhost:44357/",
                         "https://localhost:44357"
                     },
                     AllowedCorsOrigins = new List<string>
