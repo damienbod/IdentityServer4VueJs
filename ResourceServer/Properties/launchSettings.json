@@ -3,29 +3,26 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "https://localhost:44356/",
-      "sslPort": 44356
+      "applicationUrl": "https://localhost:44355/",
+      "sslPort": 44355
     }
   },
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
+      "launchUrl": "https://localhost:44355/index.html",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "StsServerIdentity": {
+    "ResourceServer": {
       "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "http://localhost:5000",
+      "launchUrl": "https://localhost:44355/api/DataEventRecords",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "newProfile1": {
-      "commandName": "IISExpress",
-      "launchBrowser": true
+      },
+      "applicationUrl": "https://localhost:44355"
     }
   }
 }
