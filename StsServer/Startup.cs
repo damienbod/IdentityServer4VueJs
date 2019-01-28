@@ -167,7 +167,7 @@ namespace StsServerIdentity
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseHsts(hsts => hsts.MaxAge(365).IncludeSubdomains());
+            // app.UseHsts(hsts => hsts.MaxAge(365).IncludeSubdomains());
             app.UseXContentTypeOptions();
             app.UseReferrerPolicy(opts => opts.NoReferrer());
             app.UseXXssProtection(options => options.EnabledWithBlockMode());

@@ -11,6 +11,8 @@ export default class AuthService {
             authority: STS_DOMAIN,
             client_id: 'vuejs_code_client',
             redirect_uri: 'https://localhost:44357/callback.html',
+            automaticSilentRenew: true,
+            silent_redirect_uri: 'https://localhost:44357/silent-renew.html',
             response_type: 'code',
             scope: 'openid profile dataEventRecords',
             post_logout_redirect_uri: 'https://localhost:44357/',

@@ -18,3 +18,5 @@ https://www.jerriepelser.com/blog/using-auth0-with-vue-oidc-client-js/
 https://github.com/joaojosefilho/vuejsOidcClient
 
 https://www.scottbrady91.com/Angular/Migrating-oidc-client-js-to-use-the-OpenID-Connect-Authorization-Code-Flow-and-PKCE
+
+https://github.com/IdentityModel/oidc-client-js/
