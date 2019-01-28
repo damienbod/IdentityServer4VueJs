@@ -80,7 +80,7 @@ namespace AspNet5SQLite
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
               .AddIdentityServerAuthentication(options =>
               {
-                  options.Authority = "https://localhost:443156/";
+                  options.Authority = "https://localhost:44356/";
                   options.ApiName = "dataEventRecords";
                   options.ApiSecret = "dataEventRecordsSecret";
               });
