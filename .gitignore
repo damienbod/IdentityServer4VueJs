@@ -1,0 +1,7 @@
+/StsServer/.vs
+/.vs/StsServerIdentity/v15/.suo
+/**/bin/Debug/**/*.*
+/**/node_modules/**/*.*
+/**/obj/Debug/**/*.*
+/StsServer/obj/*.*
+/StsServer/node_modules/bootstrap/LICENSE
