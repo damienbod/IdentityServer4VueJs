@@ -101,8 +101,6 @@ namespace StsServerIdentity
                         "openid",
                         "dataEventRecords",
                         "dataeventrecordsscope",
-                        "securedFiles",
-                        "securedfilesscope",
                         "role",
                         "profile",
                         "email"

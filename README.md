@@ -2,6 +2,7 @@
 
 Securing a Vue.js app using OpenID Connect Code Flow with PKCE and IdentityServer4
 
+https://damienbod.com/2019/01/29/securing-a-vue-js-app-using-openid-connect-code-flow-with-pkce-and-identityserver4/
 
 ## Changes to Vue.js CLI package.json 
 
