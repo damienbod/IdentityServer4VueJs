@@ -10,6 +10,10 @@ change the project.json file to use HTTPS
 
 vue-cli-service serve --https --port 44357
 
+## History 
+
+2019-010-03 Updated to ASP.NET Core 3.0
+
 ## Links
 
 https://cli.vuejs.org

@@ -1,5 +1,3 @@
-using AspNet5SQLite.Model;
-using AspNet5SQLite.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,29 +5,27 @@ using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Serialization;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using Microsoft.Extensions.Hosting;
+using AspNet5SQLite.Model;
+using AspNet5SQLite.Repositories;
 
 namespace AspNet5SQLite
 {
     public class Startup
     {
-        public IConfigurationRoot Configuration { get; set; }
-        
-        private IHostingEnvironment _env { get; set; }
-
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
-            _env = env;
-            var builder = new ConfigurationBuilder()
-                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json");
-            Configuration = builder.Build();
+            Configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
+
+        public IConfiguration Configuration { get; }
+
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -39,38 +35,40 @@ namespace AspNet5SQLite
 
             X509Certificate2 cert;
 
-            if (_env.IsProduction())
+            if (_webHostEnvironment.IsProduction())
             {
                 if (useLocalCertStore)
                 {
-                    using (X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine))
-                    {
-                        store.Open(OpenFlags.ReadOnly);
-                        var certs = store.Certificates.Find(X509FindType.FindByThumbprint, certificateThumbprint, false);
-                        cert = certs[0];
-                        store.Close();
-                    }
+                    using X509Store store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
+                    store.Open(OpenFlags.ReadOnly);
+                    var certs = store.Certificates.Find(X509FindType.FindByThumbprint, certificateThumbprint, false);
+                    cert = certs[0];
+                    store.Close();
                 }
             }
             else
             {
-                cert = new X509Certificate2(Path.Combine(_env.ContentRootPath, "damienbodserver.pfx"), "");
+                cert = new X509Certificate2(Path.Combine(_webHostEnvironment.ContentRootPath, "damienbodserver.pfx"), "");
             }
 
             services.AddDbContext<DataEventRecordContext>(options =>
                 options.UseSqlite(connection)
             );
 
-            services.AddCors();
-
-            var policy = new Microsoft.AspNetCore.Cors.Infrastructure.CorsPolicy();
-
-            policy.Headers.Add("*");
-            policy.Methods.Add("*");
-            policy.Origins.Add("*");
-            policy.SupportsCredentials = true;
-
-            services.AddCors(x => x.AddPolicy("corsGlobalPolicy", policy));
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder
+                            .AllowCredentials()
+                            .WithOrigins(
+                                "https://localhost:44356", "https://localhost:44357")
+                            .SetIsOriginAllowedToAllowWildcardSubdomains()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
+            });
 
             var guestPolicy = new AuthorizationPolicyBuilder()
                 .RequireAuthenticatedUser()
@@ -101,29 +99,27 @@ namespace AspNet5SQLite
                 });
             });
 
-            services.AddMvc(options =>
-            {
-               options.Filters.Add(new AuthorizeFilter(guestPolicy));
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-            });
 
             services.AddScoped<IDataEventRecordRepository, DataEventRecordRepository>();
+            services.AddControllers()
+                .AddNewtonsoftJson()
+               .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
             app.UseExceptionHandler("/Home/Error");
-            app.UseCors("corsGlobalPolicy");
+            app.UseCors("AllowAllOrigins");
             app.UseStaticFiles();
 
             app.UseAuthentication();
-            app.UseMvc(routes =>
+            app.UseAuthorization();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
         }
     }
