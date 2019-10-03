@@ -154,8 +154,6 @@ namespace StsServerIdentity
                     };
                 });
 
-            services.AddRazorPages();
-
             services.AddIdentityServer()
                 .AddSigningCredential(cert)
                 .AddInMemoryIdentityResources(Config.GetIdentityResources())
@@ -237,7 +235,6 @@ namespace StsServerIdentity
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
             });
         }
     }
