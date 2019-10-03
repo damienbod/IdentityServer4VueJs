@@ -10,7 +10,7 @@
 
         <div v-if="dataEventRecordsItems && dataEventRecordsItems.length">
             <div v-for="dataEventRecordsItem of dataEventRecordsItems">
-                <p><em>Id:</em> {{dataEventRecordsItem.Id}} <em>Details:</em> {{dataEventRecordsItem.Name}}  - {{dataEventRecordsItem.Description}} - {{dataEventRecordsItem.Timestamp}}</p>
+                <p><em>Id:</em> {{dataEventRecordsItem.id}} <em>Details:</em> {{dataEventRecordsItem.name}}  - {{dataEventRecordsItem.description}} - {{dataEventRecordsItem.timestamp}}</p>
             </div>
             <br />
         </div>
