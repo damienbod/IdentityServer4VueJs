@@ -22,7 +22,7 @@ export default class AuthService {
         this.userManager = new UserManager(settings);
     }
 
-    public getUser(): Promise<User> {
+    public getUser(): Promise<User | null> {
         return this.userManager.getUser();
     }
 
