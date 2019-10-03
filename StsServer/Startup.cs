@@ -82,7 +82,7 @@ namespace StsServerIdentity
                     {
                         builder
                             .AllowCredentials()
-                            .WithOrigins("https://localhost:44341")
+                            .WithOrigins("https://localhost:44356", "https://localhost:44357")
                             .SetIsOriginAllowedToAllowWildcardSubdomains()
                             .AllowAnyHeader()
                             .AllowAnyMethod();
@@ -188,8 +188,6 @@ namespace StsServerIdentity
             //app.UseXXssProtection(options => options.EnabledWithBlockMode());
 
             var stsConfig = Configuration.GetSection("StsConfig");
-            var angularClient2Url = stsConfig["AngularClient2Url"];
-            var angularClientUrl = stsConfig["AngularClientUrl"];
 
             app.UseCsp(opts => opts
                 .BlockAllMixedContent()
@@ -197,9 +195,7 @@ namespace StsServerIdentity
                 .StyleSources(s => s.UnsafeInline())
                 .FontSources(s => s.Self())
                 .FrameAncestors(s => s.Self())
-                .FrameAncestors(s => s.CustomSources(
-                   "https://localhost:44341")
-                 )
+                .FrameAncestors(s => s.CustomSources("https://localhost:44356", "https://localhost:44357"))
                 .ImageSources(imageSrc => imageSrc.Self())
                 .ImageSources(imageSrc => imageSrc.CustomSources("data:"))
                 .ScriptSources(s => s.Self())
