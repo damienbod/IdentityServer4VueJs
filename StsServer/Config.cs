@@ -60,7 +60,7 @@ namespace StsServerIdentity
             };
         }
 
-        public static IEnumerable<Client> GetClients(IConfigurationSection stsConfig)
+        public static IEnumerable<Client> GetClients()
         {
             // TODO use configs in app
             //var yourConfig = stsConfig["ClientUrl"];
