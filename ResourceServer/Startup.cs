@@ -73,8 +73,7 @@ namespace AspNet5SQLite
 
             services.AddScoped<IDataEventRecordRepository, DataEventRecordRepository>();
             services.AddControllers()
-                .AddNewtonsoftJson()
-               .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                .AddNewtonsoftJson();
         }
 
         public void Configure(IApplicationBuilder app)
