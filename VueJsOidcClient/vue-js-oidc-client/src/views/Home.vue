@@ -61,8 +61,9 @@
 
         public getProtectedApiData() {
 
+            const authorizationHeader = 'Authorization';
             auth.getAccessToken().then((userToken: string) => {
-                axios.defaults.headers.common['Authorization'] = `Bearer ${userToken}`;
+                axios.defaults.headers.common[authorizationHeader] = `Bearer ${userToken}`;
 
                 axios.get('https://localhost:44355/api/DataEventRecords/')
                     .then((response: any) => {

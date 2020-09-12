@@ -21,6 +21,8 @@ namespace AspNet5SQLite
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IDataEventRecordRepository, DataEventRecordRepository>();
+
             var connection = Configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<DataEventRecordContext>(options =>
@@ -34,8 +36,7 @@ namespace AspNet5SQLite
                     {
                         builder
                             .AllowCredentials()
-                            .WithOrigins(
-                                "https://localhost:44356", "https://localhost:44357")
+                            .WithOrigins("https://localhost:44357")
                             .SetIsOriginAllowedToAllowWildcardSubdomains()
                             .AllowAnyHeader()
                             .AllowAnyMethod();
@@ -51,8 +52,9 @@ namespace AspNet5SQLite
               .AddIdentityServerAuthentication(options =>
               {
                   options.Authority = "https://localhost:44356/";
-                  options.ApiName = "dataEventRecords";
+                  options.ApiName = "DataEventRecordsApi";
                   options.ApiSecret = "dataEventRecordsSecret";
+                  options.NameClaimType = "email";
               });
 
             services.AddAuthorization(options =>
@@ -63,7 +65,7 @@ namespace AspNet5SQLite
                 });
                 options.AddPolicy("dataEventRecordsUser", policyUser =>
                 {
-                    policyUser.RequireClaim("role",  "dataEventRecords.user");
+                    policyUser.RequireClaim("role", "dataEventRecords.user");
                 });
                 options.AddPolicy("dataEventRecords", policyUser =>
                 {
@@ -71,7 +73,6 @@ namespace AspNet5SQLite
                 });
             });
 
-            services.AddScoped<IDataEventRecordRepository, DataEventRecordRepository>();
             services.AddControllers()
                 .AddNewtonsoftJson();
         }

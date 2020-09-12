@@ -81,7 +81,7 @@ namespace StsServerIdentity
                     {
                         builder
                             .AllowCredentials()
-                            .WithOrigins(vueJsApiUrl)
+                            .WithOrigins("https://localhost:44356", "https://localhost:44357")
                             .SetIsOriginAllowedToAllowWildcardSubdomains()
                             .AllowAnyHeader()
                             .AllowAnyMethod();
@@ -192,7 +192,7 @@ namespace StsServerIdentity
                 .FontSources(s => s.Self())
                 .FrameAncestors(s => s.Self())
                 .FrameAncestors(s => s.CustomSources(
-                   vueJsApiUrl)
+                   "https://localhost:44356", "https://localhost:44357")
                  )
                 .ImageSources(imageSrc => imageSrc.Self())
                 .ImageSources(imageSrc => imageSrc.CustomSources("data:"))
