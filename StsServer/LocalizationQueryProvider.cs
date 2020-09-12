@@ -10,9 +10,8 @@ namespace StsServerIdentity
 {
     public class LocalizationQueryProvider : RequestCultureProvider
     {
-        public static readonly string DefaultParamterName = "culture";
-
-        public string QureyParamterName { get; set; } = DefaultParamterName;
+        public static readonly string DefaultParameterName = "culture";
+        public string QueryParameterName { get; set; } = DefaultParameterName;
 
         /// <inheritdoc />
         public override Task<ProviderCultureResult> DetermineProviderCultureResult(HttpContext httpContext)
@@ -38,7 +37,7 @@ namespace StsServerIdentity
                     var requestCulture = query1.FirstOrDefault(t => t.Key == "ui_locales").Value;
 
                     var cultureFromReturnUrl = requestCulture.ToString();
-                    if(string.IsNullOrEmpty(cultureFromReturnUrl))
+                    if (string.IsNullOrEmpty(cultureFromReturnUrl))
                     {
                         return NullProviderCultureResult;
                     }
