@@ -16,6 +16,7 @@ using StsServerIdentity.Resources;
 using System.Reflection;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace StsServerIdentity.Controllers
 {
@@ -33,6 +34,7 @@ namespace StsServerIdentity.Controllers
         private const string RecoveryCodesKey = nameof(RecoveryCodesKey);
 
         private readonly IStringLocalizer _sharedLocalizer;
+        private readonly Fido2Storage _fido2Storage;
 
         public ManageController(
           UserManager<ApplicationUser> userManager,
@@ -40,13 +42,15 @@ namespace StsServerIdentity.Controllers
           IEmailSender emailSender,
           ILogger<ManageController> logger,
           UrlEncoder urlEncoder,
-          IStringLocalizerFactory factory)
+          IStringLocalizerFactory factory,
+          Fido2Storage fido2Storage)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            _fido2Storage = fido2Storage;
 
             var type = typeof(SharedResource);
             var assemblyName = new AssemblyName(type.GetTypeInfo().Assembly.FullName);
@@ -132,12 +136,13 @@ namespace StsServerIdentity.Controllers
             }
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
             var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
             await _emailSender.SendEmail(
                model.Email,
                "StsServerIdentity Verification Email",
-               $"Please verify by clicking here: {callbackUrl}",
+               $"Please verify by clicking here: {HtmlEncoder.Default.Encode(callbackUrl)}",
                "Hi Sir");
 
             StatusMessage = _sharedLocalizer["STATUS_UPDATE_PROFILE_EMAIL_SEND"];
@@ -322,6 +327,19 @@ namespace StsServerIdentity.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Fido2Mfa()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound(_sharedLocalizer["USER_NOTFOUND", _userManager.GetUserId(User)]);
+            }
+
+            var model = new MfaModel();
+            return View(model);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> TwoFactorAuthentication()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -366,6 +384,9 @@ namespace StsServerIdentity.Controllers
             {
                 return NotFound(_sharedLocalizer["USER_NOTFOUND", _userManager.GetUserId(User)]);
             }
+
+            // remove Fido2 MFA if it exists
+            await _fido2Storage.RemoveCredentialsByUsername(user.UserName);
 
             var disable2faResult = await _userManager.SetTwoFactorEnabledAsync(user, false);
             if (!disable2faResult.Succeeded)
