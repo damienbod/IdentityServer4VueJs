@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "StsServerIdentity Home";
 }
-@inject IOptions<AuthConfiguration> OptionsAuthConfiguration
+@inject IOptions<AuthConfigurations> OptionsAuthConfiguration
 
 @if (User.Identity.IsAuthenticated)
 {
