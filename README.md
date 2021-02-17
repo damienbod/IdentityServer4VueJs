@@ -12,7 +12,7 @@ vue-cli-service serve --https --port 44357
 
 ## History 
 
-2021-01-09 Updated to ASP.NET Core 35, Updated VUE JS project
+2021-01-09 Updated to ASP.NET Core 5, Updated VUE JS project
 
 2020-09-12 Updated to ASP.NET Core 3.1, Updated VUE JS project
 
