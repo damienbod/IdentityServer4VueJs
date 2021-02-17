@@ -7,6 +7,9 @@ using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Mvc;
 using AspNet5SQLite.Model;
 using AspNet5SQLite.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using System;
 
 namespace AspNet5SQLite
 {
@@ -75,13 +78,78 @@ namespace AspNet5SQLite
 
             services.AddControllers()
                 .AddNewtonsoftJson();
+
+            services.AddSwaggerGen(c =>
+            {
+                // add JWT Authentication
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "JWT Authentication",
+                    Description = "Enter JWT Bearer token **_only_**",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer", // must be lower case
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {securityScheme, new string[] { }}
+                });
+
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "User API",
+                    Version = "v1",
+                    Description = "User API",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "damienbod",
+                        Email = string.Empty,
+                        Url = new Uri("https://damienbod.com/"),
+                    },
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API");
+                c.RoutePrefix = string.Empty;
+            });
+
             app.UseExceptionHandler("/Home/Error");
             app.UseCors("AllowAllOrigins");
-            app.UseStaticFiles();
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = context =>
+                {
+                    if (context.Context.Response.Headers["feature-policy"].Count == 0)
+                    {
+                        var featurePolicy = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
+
+                        context.Context.Response.Headers["feature-policy"] = featurePolicy;
+                    }
+
+                    if (context.Context.Response.Headers["X-Content-Security-Policy"].Count == 0)
+                    {
+                        var csp = "script-src 'self';style-src 'self';img-src 'self' data:;font-src 'self';form-action 'self';frame-ancestors 'self';block-all-mixed-content";
+                        // IE
+                        context.Context.Response.Headers["X-Content-Security-Policy"] = csp;
+                    }
+                }
+            });
+
+            app.UseCookiePolicy();
 
             app.UseRouting();
 
@@ -92,6 +160,7 @@ namespace AspNet5SQLite
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
