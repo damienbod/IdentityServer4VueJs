@@ -50,7 +50,7 @@
         }
 
         public mounted() {
-            auth.getUser().then((user) => {
+            auth.getUser().then((user: any) => {
                 if (user) {
                     this.currentUser = user.profile.name;
                     this.accessTokenExpired = user.expired;
