@@ -46,6 +46,15 @@ namespace StsServerIdentity
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AuthConfigurations>(_configuration.GetSection("AuthConfigurations"));
+            services.Configure<EmailSettings>(_configuration.GetSection("EmailSettings"));
+            services.AddTransient<IProfileService, IdentityWithAdditionalClaimsProfileService>();
+            services.AddTransient<IEmailSender, EmailSender>();
+
+            var authConfiguration = _configuration.GetSection("AuthConfigurations");
+            var authSecretsConfiguration = _configuration.GetSection("AuthSecretsConfigurations");
+
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.MinimumSameSitePolicy = SameSiteMode.Unspecified;

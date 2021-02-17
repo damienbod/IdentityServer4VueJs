@@ -1,6 +1,6 @@
 ﻿namespace StsServerIdentity.Models
 {
-    public class AuthSecretsConfiguration
+    public class AuthSecretsConfigurations
     {
         public string ApiSecret { get; set; }
     }
