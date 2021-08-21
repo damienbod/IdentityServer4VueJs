@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -24,10 +25,9 @@ using StsServerIdentity.Services.Certificate;
 using Serilog;
 using Microsoft.AspNetCore.Http;
 using Fido2NetLib;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
-using System.Threading.Tasks;
-using Microsoft.IdentityModel.Logging;
 
 namespace StsServerIdentity
 {
@@ -53,8 +53,6 @@ namespace StsServerIdentity
 
             var authConfiguration = _configuration.GetSection("AuthConfigurations");
             var authSecretsConfiguration = _configuration.GetSection("AuthSecretsConfigurations");
-
-
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.MinimumSameSitePolicy = SameSiteMode.Unspecified;
@@ -189,44 +187,25 @@ namespace StsServerIdentity
             });
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            IdentityModelEventSource.ShowPII = true;
+            app.UseSecurityHeaders(
+                SecurityHeadersDefinitions
+                    .GetHeaderPolicyCollection(env.IsDevelopment()));
+
             app.UseCookiePolicy();
 
             if (_environment.IsDevelopment())
             {
+                // for debugging
+                IdentityModelEventSource.ShowPII = true;
+
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
-            app.UseCors("AllowAllOrigins");
-
-            app.UseHsts(hsts => hsts.MaxAge(365).IncludeSubdomains());
-            app.UseXContentTypeOptions();
-            app.UseReferrerPolicy(opts => opts.NoReferrer());
-            app.UseXXssProtection(options => options.EnabledWithBlockMode());
-
-            var authConfiguration = _configuration.GetSection("AuthConfiguration");
-            var vueJsApiUrl = authConfiguration["VueJsApiUrl"];
-
-            app.UseCsp(opts => opts
-                .BlockAllMixedContent()
-                .StyleSources(s => s.Self())
-                .StyleSources(s => s.UnsafeInline())
-                .FontSources(s => s.Self())
-                .FrameAncestors(s => s.Self())
-                .FrameAncestors(s => s.CustomSources(
-                   "https://localhost:44356", "https://localhost:44357")
-                 )
-                .ImageSources(imageSrc => imageSrc.Self())
-                .ImageSources(imageSrc => imageSrc.CustomSources("data:"))
-                .ScriptSources(s => s.Self())
-                .ScriptSources(s => s.UnsafeInline())
-            );
 
             var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(locOptions.Value);
@@ -235,25 +214,7 @@ namespace StsServerIdentity
             // https://nblumhardt.com/2019/10/serilog-mvc-logging/
             app.UseSerilogRequestLogging();
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                OnPrepareResponse = context =>
-                {
-                    if (context.Context.Response.Headers["feature-policy"].Count == 0)
-                    {
-                        var featurePolicy = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
-
-                        context.Context.Response.Headers["feature-policy"] = featurePolicy;
-                    }
-
-                    if (context.Context.Response.Headers["X-Content-Security-Policy"].Count == 0)
-                    {
-                        var csp = "script-src 'self';style-src 'self';img-src 'self' data:;font-src 'self';form-action 'self';frame-ancestors 'self';block-all-mixed-content";
-                        // IE
-                        context.Context.Response.Headers["X-Content-Security-Policy"] = csp;
-                    }
-                }
-            });
+            app.UseStaticFiles();
 
             app.UseRouting();
 

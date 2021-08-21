@@ -1,15 +1,14 @@
 {
-  "version": "5.0.4",
+  "version": "5.1.3",
   "name": "asp.net",
   "private": true,
   "devDependencies": {
     "bootstrap": "4.6.0",
-    "jquery": "3.5.1",
+    "jquery": "3.6.0",
+    "jquery-ajax-unobtrusive": "3.2.6",
     "jquery-validation": "1.19.3",
     "jquery-validation-unobtrusive": "3.2.12",
-    "jquery-ajax-unobtrusive": "3.2.6",
     "popper.js": "^1.16.1",
-    "sweetalert2": "^10.15.1"
-  },
-  "dependencies": {}
+    "sweetalert2": "^11.0.0"
+  }
 }
