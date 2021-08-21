@@ -1,5 +1,7 @@
 # IdentityServer4 Vue.Js oidc-client-js 
 
+[![.NET](https://github.com/damienbod/IdentityServer4VueJs/actions/workflows/dotnet.yml/badge.svg)](https://github.com/damienbod/IdentityServer4VueJs/actions/workflows/dotnet.yml)
+
 Securing a Vue.js app using OpenID Connect Code Flow with PKCE and IdentityServer4
 
 https://damienbod.com/2019/01/29/securing-a-vue-js-app-using-openid-connect-code-flow-with-pkce-and-identityserver4/
