@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using IdentityServer4.AccessTokenValidation;
-using Microsoft.AspNetCore.Mvc;
-using AspNet5SQLite.Model;
-using AspNet5SQLite.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 using System;
+using AspNet5SQLite.Repositories;
+using AspNet5SQLite.Model;
+using Microsoft.EntityFrameworkCore;
+using IdentityServer4.AccessTokenValidation;
 
 namespace AspNet5SQLite
 {
@@ -117,37 +118,27 @@ namespace AspNet5SQLite
             });
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API");
-                c.RoutePrefix = string.Empty;
-            });
+            app.UseSecurityHeaders(
+                SecurityHeadersDefinitions
+                    .GetHeaderPolicyCollection(env.IsDevelopment()));
 
-            app.UseExceptionHandler("/Home/Error");
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "User API");
+                    c.RoutePrefix = string.Empty;
+                });
+            }
+
             app.UseCors("AllowAllOrigins");
 
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                OnPrepareResponse = context =>
-                {
-                    if (context.Context.Response.Headers["feature-policy"].Count == 0)
-                    {
-                        var featurePolicy = "accelerometer 'none'; camera 'none'; geolocation 'none'; gyroscope 'none'; magnetometer 'none'; microphone 'none'; payment 'none'; usb 'none'";
-
-                        context.Context.Response.Headers["feature-policy"] = featurePolicy;
-                    }
-
-                    if (context.Context.Response.Headers["X-Content-Security-Policy"].Count == 0)
-                    {
-                        var csp = "script-src 'self';style-src 'self';img-src 'self' data:;font-src 'self';form-action 'self';frame-ancestors 'self';block-all-mixed-content";
-                        // IE
-                        context.Context.Response.Headers["X-Content-Security-Policy"] = csp;
-                    }
-                }
-            });
+            app.UseStaticFiles();
 
             app.UseCookiePolicy();
 
