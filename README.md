@@ -14,7 +14,9 @@ vue-cli-service serve --https --port 44357
 
 ## History 
 
-2022-02-28 Updated packages & .NET 6
+2022-02-11 Updated packages and namespaces
+
+2022-01-28 Updated packages & .NET 6
 
 2021-08-21 Updated packages
 

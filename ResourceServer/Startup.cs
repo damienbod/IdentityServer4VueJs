@@ -100,7 +100,7 @@ public class Startup
             c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
-                {securityScheme, new string[] { }}
+                {securityScheme, Array.Empty<string>()}
             });
 
             c.SwaggerDoc("v1", new OpenApiInfo
